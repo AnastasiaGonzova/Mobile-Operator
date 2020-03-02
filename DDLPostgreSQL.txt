@@ -1,0 +1,210 @@
+CREATE TABLE "Contracts" (
+	"ContractID" integer NOT NULL PRIMARY KEY,
+	"ClientTypeID" integer NOT NULL,
+	"PersonID" integer NOT NULL,
+	"OrganizationID" integer NOT NULL,
+	"SerialNumber" integer NOT NULL,
+	"StartDate" date NOT NULL,
+	"EndDate" date NOT NULL,
+	
+	FOREIGN KEY ("ClientTypeID") REFERENCES "ClientTypes"("ClientTypeID"),
+	FOREIGN KEY ("PersonID") REFERENCES "Persons"("PersonID"),
+	FOREIGN KEY ("OrganizationID") REFERENCES "Organizations"("OrganizationID")
+);
+
+
+
+CREATE TABLE "ClientTypes" (
+	"ClientTypeID" integer NOT NULL PRIMARY KEY,
+	"ClientTypeName" varchar(255) NOT NULL
+);
+
+
+
+CREATE TABLE "Organizations" (
+	"OrganizationID" integer NOT NULL PRIMARY KEY,
+	"OrganizationName" varchar(255) NOT NULL
+);
+
+
+
+CREATE TABLE "Accounts" (
+	"AccountID" integer NOT NULL PRIMARY KEY,
+	"BIC" integer NOT NULL,
+	"CorrAcc" integer NOT NULL,
+	"PaymentTypeID" integer NOT NULL,
+	"ContractID" integer NOT NULL,
+	"StartDate" date NOT NULL,
+	"EndDate" date NOT NULL,
+	
+	FOREIGN KEY ("PaymentTypeID") REFERENCES "PaymentTypes"("PaymentTypeID"),
+	FOREIGN KEY ("ContractID") REFERENCES "Contracts"("ContractID")
+);
+
+
+
+CREATE TABLE "PaymentTypes" (
+	"PaymentTypeID" integer NOT NULL PRIMARY KEY,
+	"PaymentTypeName" varchar(255) NOT NULL
+);
+
+
+
+CREATE TABLE "Subscriptions" (
+	"SubscriptionID" integer NOT NULL PRIMARY KEY,
+	"IMSI" integer NOT NULL,
+	"ICCID" integer NOT NULL,
+	"MSISDN" integer NOT NULL,
+	"IMEI" integer NOT NULL,
+	"PersonID" integer NOT NULL,
+	"AccountID" integer NOT NULL,
+	"TariffID" integer NOT NULL,
+	"StartDate" date NOT NULL,
+	"EndDate" date NOT NULL,
+	
+	FOREIGN KEY ("PersonID") REFERENCES "Persons"("PersonID"),
+	FOREIGN KEY ("AccountID") REFERENCES "Accounts"("AccountID"),
+	FOREIGN KEY ("TariffID") REFERENCES "Tariffs"("TariffID")
+);
+
+
+
+CREATE TABLE "Tariffs" (
+	"TariffID" integer NOT NULL PRIMARY KEY,
+	"TariffName" varchar(255) NOT NULL,
+	"StartDate" date NOT NULL,
+	"EndDate" date NOT NULL
+);
+
+
+
+CREATE TABLE "Passports" (
+	"PassportID" integer NOT NULL PRIMARY KEY,
+	"PersonID" integer NOT NULL,
+	"Series" integer NOT NULL,
+	"Number" integer NOT NULL,
+	"Citizenship" varchar(255) NOT NULL,
+	"PlaceIssue" varchar(255) NOT NULL,
+	"DateIssue" date NOT NULL,
+	"StartDate" date NOT NULL,
+	"EndDate" date NOT NULL,
+	
+	FOREIGN KEY ("PersonID") REFERENCES "Persons"("PersonID")
+);
+
+
+
+CREATE TABLE "TariffServices" (
+	"TariffServiceID" integer NOT NULL PRIMARY KEY,
+	"TariffID" integer NOT NULL,
+	"ServiceID" integer NOT NULL,
+	"MeasureID" integer NOT NULL,
+	"Price" integer NOT NULL,
+	"Rounding" integer NOT NULL,
+
+	FOREIGN KEY ("TariffID") REFERENCES "Tariffs"("TariffID"),
+	FOREIGN KEY ("ServiceID") REFERENCES "Services"("ServiceID"),
+	FOREIGN KEY ("MeasureID") REFERENCES "Measures"("MeasureID")
+);
+
+
+
+CREATE TABLE "Measures" (
+	"MeasureID" integer NOT NULL PRIMARY KEY,
+	"MeasureType" varchar(255) NOT NULL
+);
+
+
+
+CREATE TABLE "Services" (
+	"ServiceID" integer NOT NULL PRIMARY KEY,
+	"ServiceTypeID" integer NOT NULL,
+	"ServiceName" varchar(255) NOT NULL,
+	"StartDate" date NOT NULL,
+	"EndDate" date NOT NULL,
+	
+	FOREIGN KEY ("ServiceTypeID") REFERENCES "ServiceTypes"("ServiceTypeID")
+);
+
+
+
+CREATE TABLE "ServiceTypes" (
+	"ServiceTypeID" integer NOT NULL PRIMARY KEY,
+	"ServiceTypeName" varchar(255) NOT NULL
+);
+
+
+
+CREATE TABLE "Facts" (
+	"FactID" integer NOT NULL PRIMARY KEY,
+	"SubscriptionID" integer NOT NULL,
+	"ServiceID" integer NOT NULL,
+	"Volume" integer NOT NULL,
+	"StartDate" date NOT NULL,
+	"EndDate" date NOT NULL,
+	
+	FOREIGN KEY ("SubscriptionID") REFERENCES "Subscriptions"("SubscriptionID"),
+	FOREIGN KEY ("ServiceID") REFERENCES "Services"("ServiceID")
+);
+
+
+
+CREATE TABLE "Buckets" (
+	"BucketID" integer NOT NULL PRIMARY KEY,
+	"ServiceID" integer NOT NULL,
+	"TariffServiceID" integer NOT NULL,
+	"Volume" integer NOT NULL,
+	"Price" integer NOT NULL,
+	
+	FOREIGN KEY ("ServiceID") REFERENCES "Services"("ServiceID"),
+	FOREIGN KEY ("TariffServiceID") REFERENCES "TariffServices"("TariffServiceID")
+);
+
+
+
+CREATE TABLE "BucketFacts" (
+	"BucketFactID" integer NOT NULL PRIMARY KEY,
+	"BucketID" integer NOT NULL,
+	"SubscriprionID" integer NOT NULL,
+	"StartDate" date NOT NULL,
+	"EndDate" date NOT NULL,
+	"StartVolume" integer NOT NULL,
+	"LeftVolume" integer NOT NULL,
+	
+	FOREIGN KEY ("BucketID") REFERENCES "Buckets"("BucketID"),
+	FOREIGN KEY ("SubscriprionID") REFERENCES "Subscriptions"("SubscriptionID")
+);
+
+
+
+CREATE TABLE "Balances" (
+	"BalanceID" integer NOT NULL PRIMARY KEY,
+	"AccountID" integer NOT NULL,
+	"Volume" integer NOT NULL,
+	"PaymentID" integer NOT NULL,
+	"FactID" integer NOT NULL,
+	
+	FOREIGN KEY ("AccountID") REFERENCES "Accounts"("AccountID"),
+	FOREIGN KEY ("PaymentID") REFERENCES "Payments"("PaymentID"),
+	FOREIGN KEY ("FactID") REFERENCES "Facts"("FactID")
+);
+
+
+
+CREATE TABLE "Payments" (
+	"PaymentID" integer NOT NULL PRIMARY KEY,
+	"AccountID" integer NOT NULL,
+	"CurrencyID" integer NOT NULL,
+	"Volume" integer NOT NULL,
+	
+	FOREIGN KEY ("AccountID") REFERENCES "Accounts"("AccountID"),
+	FOREIGN KEY ("CurrencyID") REFERENCES "Currencies"("CurrencyID")
+);
+
+
+
+CREATE TABLE "Currencies" (
+	"CurrencyID" integer NOT NULL PRIMARY KEY,
+	"CurrencyName" varchar(255) NOT NULL
+);
+

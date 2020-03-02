@@ -1,0 +1,44 @@
+CREATE TABLE Object_type
+(
+ObjectType_ID number(20) NOT NULL,
+ObjectType_name varchar2(100) NOT NULL,
+CONSTRAINT ObjectType_pk PRIMARY KEY (ObjectType_ID)
+);
+
+CREATE TABLE Object
+(
+Object_ID number(20) NOT NULL,
+Object_name varchar2(100) NOT NULL,
+ObjectType_ID number(20) NOT NULL,
+CONSTRAINT Object_pk PRIMARY KEY (Object_ID),
+CONSTRAINT ObjectType_fk FOREIGN KEY (ObjectType_ID) REFERENCES Object_Type(ObjectType_ID)
+);
+
+CREATE TABLE Attribute_type
+(
+AttributeType_ID number(20) NOT NULL,
+AttributeType_name varchar2(100) NOT NULL,
+CONSTRAINT AttributeType_pk PRIMARY KEY (AttributeType_ID)
+);
+
+CREATE TABLE Attribute
+(
+Attribute_ID number(20) NOT NULL,
+AttributeType_ID number(20) NOT NULL,
+ObjectType_ID number(20) NOT NULL,
+Attribute_name varchar2(100) NOT NULL,
+CONSTRAINT Attribute_pk PRIMARY KEY (Attribute_ID),
+CONSTRAINT AttributeType_fk FOREIGN KEY (AttributeType_ID) REFERENCES Attribute_type(AttributeType_ID),
+CONSTRAINT AttrObjectType_fk FOREIGN KEY (ObjectType_ID) REFERENCES Object_Type(ObjectType_ID)
+);
+
+CREATE TABLE Parameter
+(
+Parameter_ID number(20) NOT NULL,
+Object_ID number(20) NOT NULL,
+Attribute_ID number(20) NOT NULL,
+Value varchar2(100) NOT NULL,
+CONSTRAINT Parameter_pk PRIMARY KEY (Parameter_ID),
+CONSTRAINT Attribute_fk FOREIGN KEY (Attribute_ID) REFERENCES Attribute(Attribute_ID),
+CONSTRAINT ParObject_fk FOREIGN KEY (Object_ID) REFERENCES Object(Object_ID)
+);
