@@ -1,3 +1,12 @@
+CREATE TABLE "Persons" (
+	"PersonID" integer NOT NULL PRIMARY KEY,
+	"FullName" varchar(255) NOT NULL,
+	"E-mail" varchar(255) NOT NULL,
+	"Login" varchar(255) NOT NULL,
+	"Password" varchar(255) NOT NULL,
+	"Birthday" date NOT NULL
+);
+
 CREATE TABLE "Contracts" (
 	"ContractID" integer NOT NULL PRIMARY KEY,
 	"ClientTypeID" integer NOT NULL,
