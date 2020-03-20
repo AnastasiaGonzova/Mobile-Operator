@@ -192,7 +192,9 @@ CREATE TABLE "Balances" (
 	"Volume" integer NOT NULL,
 	"PaymentID" integer NOT NULL,
 	"FactID" integer NOT NULL,
-	
+	"StartDate" date NOT NULL,
+	"EndDate" date NOT NULL,	
+
 	FOREIGN KEY ("AccountID") REFERENCES "Accounts"("AccountID"),
 	FOREIGN KEY ("PaymentID") REFERENCES "Payments"("PaymentID"),
 	FOREIGN KEY ("FactID") REFERENCES "Facts"("FactID")

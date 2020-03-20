@@ -1,0 +1,238 @@
+create or replace function getRandomInt() returns integer as $$
+declare 
+	res integer;
+begin
+	select round(random()*(101-1)+1)::integer  
+	into res;
+	return res;	
+end;
+$$ language plpgsql;
+
+
+create or replace function getRandomString(
+	maxLength integer default 10
+) returns varchar(255) as $$
+declare 
+	res varchar(255);
+begin
+	select array_to_string(
+				array(
+					select chr((97 + round(random() * 25)) :: integer)
+					from generate_series(1, maxLength)
+				), ''
+			)
+			into res;
+	return res;	
+end;
+$$ language plpgsql;
+
+
+create or replace function getRandomDate() returns date as $$
+declare 
+	res date;
+	randYear integer;
+	randMonth integer; 
+	randDay integer;
+begin
+	select round(random()*(2019-2000)+2000)::integer 
+		into randYear;
+		
+	select round(random()*(12-1)+1)::integer 
+		into randMonth;
+		
+	case randMonth
+	
+		when 1 then
+			   select round(random()*(31-1)+1)::integer 
+			   		into randDay;
+		when 2 then 
+			if(((randYear%4 = 0) && (randYear%100 <> 0))||((randYear%100 = 0)&&(randYear%400 = 0))) then
+				select round(random()*(29-1)+1)::integer 
+			   		into randDay;
+			else
+			   	select round(random()*(28-1)+1)::integer 
+			   		into randDay;
+			end if;
+		when 3 then
+			   select round(random()*(31-1)+1)::integer 
+			   		into randDay;
+		when 4 then
+			   select round(random()*(30-1)+1)::integer 
+			   		into randDay;
+		when 5 then
+			   select round(random()*(31-1)+1)::integer 
+			   		into randDay;	
+		when 6 then
+			   select round(random()*(30-1)+1)::integer 
+			   		into randDay;
+		when 7 then
+			   select round(random()*(31-1)+1)::integer 
+			   		into randDay;
+		when 8 then
+			   select round(random()*(31-1)+1)::integer 
+			   		into randDay;
+		when 9 then
+			   select round(random()*(30-1)+1)::integer 
+			   		into randDay;
+		when 10 then
+			   select round(random()*(31-1)+1)::integer 
+			   		into randDay;
+		when 11 then
+			   select round(random()*(30-1)+1)::integer 
+			   		into randDay;
+		when 12 then
+			   select round(random()*(31-1)+1)::integer 
+			   		into randDay;
+		end case;	   
+			   
+	select make_date(randYear, randMonth, randDay)
+		into res;
+	return res;	
+end;
+$$ language plpgsql;
+
+
+create or replace function insertPersons(
+	maxCount integer default 10
+) returns void as $$
+declare 
+	i integer;
+	randID integer;
+	randName varchar(255);
+	randDate date;
+	randMail varchar(255);
+	randLogin varchar(255);
+	randPassword varchar(255);
+	
+begin
+for i in 1 .. maxCount
+	loop
+	select getRandomInt() into randID;
+	select getRandomString(16) into randName;
+	select getRandomDate() into randDate;
+	select getRandomString(8) into randMail;
+	select getRandomString(16) into randLogin;
+	select getRandomSrting(8) into randPassword;
+	
+	insert into "Persons" values (randID, randName, randDate, randMail, randLogin, randPassword);
+	end loop;
+end;
+$$ language plpgsql;
+
+
+create or replace function insertOrganizations(
+	maxCount integer default 10
+) returns void as $$
+declare 
+	i integer;
+	randID integer;
+	randName varchar(255);
+	
+begin
+for i in 1 .. maxCount
+	loop
+	select getRandomInt() into randID;
+	select getRandomString(16) into randName;
+	
+	insert into "Organizations" values (randID, randName);
+	end loop;
+end;
+$$ language plpgsql;
+
+
+create or replace function insertServiceTypes(
+	maxCount integer default 10
+) returns void as $$
+declare 
+	i integer;
+	randID integer;
+	randName varchar(255);
+	
+begin
+for i in 1 .. maxCount
+	loop
+	select getRandomInt() into randID;
+	select getRandomString(16) into randName;
+	
+	insert into "ServiceTypes" values (randID, randName);
+	end loop;
+end;
+$$ language plpgsql;
+
+
+create or replace function insertPassport(
+	maxCount integer default 10
+) returns void as $$
+declare 
+	i integer;
+	randID integer;
+	randPersID integer;
+	randSeries integer;
+	randNumber integer;
+	randCitizen varchar(255);
+	randPlace varchar(255);
+	randDate date;
+	randStart date;
+	randEnd date;
+	
+begin
+for i in 1 .. maxCount
+	loop
+	select getRandomInt() into randID;
+	select getRandomInt() into randSeries;
+	select getRandomInt() into randNumber;
+	select getRandomString(24) into randCitizen;
+	select getRandomString(24) into randPlace;
+	select getRandomDate() into randDate;
+	select getRandomDate() into randStart;
+	select getRandomDate() into randEnd;
+	
+	insert into "Passport" values (randID, , randSeries, randNumber, randCitizen, randPlace, randDate, randStart, randEnd);
+	end loop;
+end;
+$$ language plpgsql;
+
+
+create or replace function insertPassport(
+	maxCount integer default 10
+) returns void as $$
+declare 
+	i integer;
+	randID integer;
+	randPersID integer;
+	randSeries integer;
+	randNumber integer;
+	randCitizen varchar(255);
+	randPlace varchar(255);
+	randDate date;
+	randStart date;
+	randEnd date;
+	
+	myMin integer;
+	myMax integer;
+	
+begin
+for i in 1 .. maxCount
+	loop
+	select getRandomInt() into randID;
+	select getRandomInt() into randSeries;
+	select getRandomInt() into randNumber;
+	select getRandomString(24) into randCitizen;
+	select getRandomString(24) into randPlace;
+	select getRandomDate() into randDate;
+	select getRandomDate() into randStart;
+	select getRandomDate() into randEnd;
+	
+	select min("PersonID") from "Persons" into myMin;
+	select max("PersonID") from "Persons" into myMax;
+	
+	loop
+	select round(random()*(myMax - myMin) + myMin) :: integer into randPersID;
+	if ((select * from "Persons" where "PersonID" = randPersID) is NOT NULL) exit;
+	end loop;
+	
+	insert into "Passport" values (randID, randPersID, randSeries, randNumber, randCitizen, randPlace, randDate, randStart, randEnd);
+	end loop;
+end;
+$$ language plpgsql;
+
